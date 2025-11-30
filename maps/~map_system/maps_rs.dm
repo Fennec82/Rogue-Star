@@ -2,6 +2,7 @@
 var/global/list/possible_station_maps = list(
 	"Stellar Delight" = /datum/map/stellar_delight,
 	"Rascal's Pass" = /datum/map/groundbase,
+	"Sirius Point" = /datum/map/sirius_point,
 	"TEST MAP" = /datum/map/virgo_minitest
 )
 
@@ -94,6 +95,9 @@ var/global/list/possible_station_maps = list(
 			log_debug("Auto map swap has triggered! [SPAN_WARNING("Loading Rascal's Pass!")]")
 			return /datum/map/groundbase
 		if(/datum/map/groundbase)
+			log_debug("Auto map swap has triggered! [SPAN_WARNING("Loading Sirius Point!")]")
+			return /datum/map/sirius_point
+		if(/datum/map/sirius_point)
 			log_debug("Auto map swap has triggered! [SPAN_WARNING("Loading Stellar Delight!")]")
 			return /datum/map/stellar_delight
 		else

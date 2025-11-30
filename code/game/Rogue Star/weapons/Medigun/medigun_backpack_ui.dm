@@ -1,10 +1,10 @@
-/obj/item/device/medigun_backpack/tgui_interact(mob/user, datum/tgui/ui)
+/obj/item/device/continuous_medigun/tgui_interact(mob/user, datum/tgui/ui)
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "Medigun", name)
 		ui.open()
 
-/obj/item/device/medigun_backpack/tgui_data(mob/user)
+/obj/item/device/continuous_medigun/tgui_data(mob/user)
 	var/mob/living/carbon/human/H = medigun.current_target
 	var/patientname
 	var/patienthealth = 0
@@ -17,7 +17,6 @@
 	var/inner_bleeding = FALSE
 	var/organ_damage = FALSE
 
-	//var/minhealth = 0
 	if(scapacitor?.get_rating() < 5)
 		gridstatus = 3
 	if(H)
@@ -40,11 +39,11 @@
 			bloodData["max_volume"] = H.species.blood_volume
 	var/list/data = list(
 		"maintenance" = maintenance,
-		"generator" = charging,
 		"gridstatus" = gridstatus,
 		"tankmax" = tankmax,
 		"power_cell_status" = bcell ? bcell.percent() : null,
-		"phoron_status" = sbin ? phoronvol/chemcap : null,
+		"battery_name" = ccell ? ccell.name : null,
+		"battery_status" = ccell ? (ccell.percent()/100) : null,
 		"bruteheal_charge" = scapacitor ? brutecharge : null,
 		"burnheal_charge" = scapacitor ? burncharge : null,
 		"toxheal_charge" = scapacitor ? toxcharge : null,
@@ -65,7 +64,7 @@
 		)
 	return data
 
-/obj/item/device/medigun_backpack/proc/get_examine_data()
+/obj/item/device/continuous_medigun/proc/get_examine_data()
 	return list(
 		"smodule" = smodule ? list("name" = smodule.name, "range" = medigun.beam_range, "rating" = smodule.get_rating()) : null,
 		"smanipulator" = smanipulator ? list("name" = smanipulator.name, "rating" = smaniptier) : null,
@@ -74,14 +73,14 @@
 		"sbin" = sbin ? list("name" = sbin.name, "chemcap" = chemcap, "tankmax" = tankmax, "rating" = sbin.get_rating()) : null
 	)
 
-/obj/item/device/medigun_backpack/tgui_act(action, params, datum/tgui/ui)
+/obj/item/device/continuous_medigun/tgui_act(action, params, datum/tgui/ui)
 	if(..())
 		return TRUE
 
 	. = TRUE
 	switch(action)
-		if("gentoggle")
-			ui_action_click()
+		if("celleject")
+			cell_eject()
 			return TRUE
 
 		if("cancel_healing")
@@ -99,6 +98,7 @@
 				return FALSE
 			smodule.forceMove(get_turf(loc))
 			to_chat(ui.user, span_notice("You remove the [smodule] from \the [src]."))
+			playsound(src, 'sound/weapons/empty.ogg', 50, 1)
 			smodule = null
 			update_icon()
 			return TRUE
@@ -109,6 +109,7 @@
 			STOP_PROCESSING(SSobj, src)
 			smanipulator.forceMove(get_turf(loc))
 			to_chat(ui.user, span_notice("You remove the [smanipulator] from \the [src]."))
+			playsound(src, 'sound/weapons/empty.ogg', 50, 1)
 			smanipulator = null
 			smaniptier = 0
 			update_icon()
@@ -119,6 +120,7 @@
 				return FALSE
 			slaser.forceMove(get_turf(loc))
 			to_chat(ui.user, span_notice("You remove the [slaser] from \the [src]."))
+			playsound(src, 'sound/weapons/empty.ogg', 50, 1)
 			slaser = null
 			update_icon()
 			return TRUE
@@ -129,6 +131,7 @@
 			STOP_PROCESSING(SSobj, src)
 			scapacitor.forceMove(get_turf(loc))
 			to_chat(ui.user, span_notice("You remove the [scapacitor] from \the [src]."))
+			playsound(src, 'sound/weapons/empty.ogg', 50, 1)
 			scapacitor = null
 			update_icon()
 			return TRUE
@@ -139,13 +142,29 @@
 			STOP_PROCESSING(SSobj, src)
 			sbin.forceMove(get_turf(loc))
 			to_chat(ui.user, span_notice("You remove the [sbin] from \the [src]."))
+			playsound(src, 'sound/weapons/empty.ogg', 50, 1)
 			sbin = null
 			sbintier = 0
 			update_icon()
 			return TRUE
 
-/obj/item/device/medigun_backpack/ShiftClick(mob/user)
+/obj/item/device/continuous_medigun/AltClick(mob/user)
+	. = ..()
+	cell_eject()
+/obj/item/device/continuous_medigun/proc/cell_eject()
+	if(!ccell)
+		return FALSE
+	charging = FALSE
+	var/mob/living/carbon/human/user = usr
+	if(!user.put_in_hands(ccell))
+		ccell.forceMove(get_turf(loc))
+	to_chat(usr, span_notice("You remove the [ccell] from \the [src]."))
+	playsound(src, 'sound/weapons/empty.ogg', 50, 1)
+	ccell = null
+	update_icon()
+	return TRUE
+/obj/item/device/continuous_medigun/ui_action_click()
 	. = ..()
 	if(!medigun)
 		return
-	tgui_interact(user)
+	tgui_interact(usr)

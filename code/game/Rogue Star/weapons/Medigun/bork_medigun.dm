@@ -20,17 +20,17 @@
 	var/action_cancelled = FALSE
 	var/wielded = FALSE
 	var/mob/current_target
-	var/mgcmo
 	canremove = FALSE
+	var/lastloc = null
 
 /obj/item/device/bork_medigun/update_twohanding()
 	var/mob/living/M = loc
 	if(istype(M) && M.item_is_in_hands(src) && !M.hands_are_full())
 		wielded = TRUE
-		name = "[initial(name)] (wielded)"
+		//name = "[initial(name)] (wielded)" //Dont think this is necessary?
 	else
 		wielded = FALSE
-		name = initial(name)
+		//name = initial(name) //This either
 	..()
 
 /obj/item/device/bork_medigun/update_held_icon()
@@ -43,6 +43,7 @@
 			else
 				LAZYSET(item_state_slots, slot_l_hand_str, initial(item_state))
 				LAZYSET(item_state_slots, slot_r_hand_str, initial(item_state))
+
 		..()
 
 // Draws a box showing the limits of movement while scanning something.

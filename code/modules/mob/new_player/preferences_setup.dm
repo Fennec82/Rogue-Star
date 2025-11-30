@@ -193,10 +193,10 @@
 	g_skin = green
 	b_skin = blue
 
-/datum/preferences/proc/dress_preview_mob(var/mob/living/carbon/human/mannequin)
+/datum/preferences/proc/dress_preview_mob(var/mob/living/carbon/human/mannequin, fast_preview = FALSE) // RS Edit: Custom markings support (Lira, September 2025)
 	if(!mannequin.dna) // Special handling for preview icons before SSAtoms has initailized.
 		mannequin.dna = new /datum/dna(null)
-	copy_to(mannequin, TRUE)
+	copy_to(mannequin, TRUE, fast_preview) // RS Edit: Custom markings support (Lira, September 2025)
 
 	if(!equip_preview_mob)
 		return
@@ -252,19 +252,40 @@
 		mannequin.job = previewJob.title
 		previewJob.equip_preview(mannequin, player_alt_titles[previewJob.title])
 
-/datum/preferences/proc/update_preview_icon()
+/datum/preferences/proc/update_preview_icon(fast_preview = TRUE) // RS Edit: Custom markings support (Lira, September 2025)
+	custom_markings_preview_ready = TRUE // RS Add: Custom markings support (Lira, Novemember 2025)
+	process_pending_custom_marking_refresh() // RS Add: Custom markings support (Lira, Novemember 2025)
 	var/mob/living/carbon/human/dummy/mannequin/mannequin = get_mannequin(client_ckey)
 	if(!mannequin.dna) // Special handling for preview icons before SSAtoms has initailized.
 		mannequin.dna = new /datum/dna(null)
 	mannequin.delete_inventory(TRUE)
-	dress_preview_mob(mannequin)
+	dress_preview_mob(mannequin, fast_preview) // RS Edit: Custom markings support (Lira, September 2025)
 	mannequin.update_transform() //VOREStation Edit to update size/shape stuff.
 	mannequin.toggle_tail(setting = animations_toggle)
 	mannequin.toggle_wing(setting = animations_toggle)
 	mannequin.update_tail_showing()
 	mannequin.ImmediateOverlayUpdate()
 
+	// RS Add Start: Custom markings support (Lira, November 2025)
+	var/skip_invalidation = skip_custom_marking_cache_invalidation_once
+	skip_custom_marking_cache_invalidation_once = FALSE
+	if(!skip_invalidation)
+		// Any change to the mannequin means cached custom-marking references are stale.
+		custom_marking_reference_signature = null
+		custom_marking_reference_payload_cache = null
+		custom_marking_reference_mannequin_signature = null
+
+		// If the designer is open, clear its caches and nudge the UI to rebuild previews.
+		if(custom_marking_designer_ui && !QDELETED(custom_marking_designer_ui))
+			custom_marking_designer_ui.reference_cache_signature = null
+			custom_marking_designer_ui.reference_payload_cache = null
+			custom_marking_designer_ui.reference_mannequin_signature = null
+			custom_marking_designer_ui.preview_revision++
+			SStgui.update_uis(custom_marking_designer_ui)
+	// RS Add End
+
 	update_character_previews(new /mutable_appearance(mannequin))
+	custom_marking_preview_overlays = null // RS Add: Custom markings support (Lira, September 2025)
 
 /datum/preferences/proc/get_highest_job()
 	var/datum/job/highJob

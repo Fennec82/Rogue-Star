@@ -47,6 +47,8 @@
 	var/list/food_preference = list()
 	var/food_preference_bonus = 0
 
+	var/food_class = FP_MEAT	//RS ADD
+
 /datum/species/proc/give_numbing_bite() //Holy SHIT this is hacky, but it works. Updating a mob's attacks mid game is insane.
 	unarmed_attacks = list()
 	unarmed_types += /datum/unarmed_attack/bite/sharp/numbing
@@ -103,6 +105,14 @@
 		H.dna.ready_dna(H)
 
 	return new_copy
+
+// RS Add: Minimal preview mannequin (Lira, September 2025)
+/datum/species/proc/clone_basic_appearance(var/mob/living/carbon/human/H)
+	if(!istype(H))
+		return
+	handle_post_spawn(H)
+	create_organs(H)
+	return
 
 /datum/species/proc/copy_variables(var/datum/species/S, var/list/whitelist)
 	//List of variables to ignore, trying to copy type will runtime.

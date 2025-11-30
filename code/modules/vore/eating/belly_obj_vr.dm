@@ -34,7 +34,7 @@
 	var/absorbchance = 0					// % Chance of stomach beginning to absorb if prey struggles
 	var/escapechance = 0 					// % Chance of prey beginning to escape if prey struggles.
 	var/escapechance_absorbed = 0			// % Chance of absorbed prey finishing an escape. Requires a successful escape roll against the above as well.  //RS edit - copy from virgo
-	var/escape_stun = 0						// AI controlled mobs with a number here will be weakened by the provided var when someone escapes, to prevent endless nom loops
+	var/escape_stun = 2						// AI controlled mobs with a number here will be weakened by the provided var when someone escapes, to prevent endless nom loops //RS EDIT
 	var/transferchance = 0 					// % Chance of prey being trasnsfered, goes from 0-100%
 	var/transferchance_secondary = 0 		// % Chance of prey being transfered to transferchance_secondary, also goes 0-100%
 	var/save_digest_mode = TRUE				// Whether this belly's digest mode persists across rounds
@@ -188,13 +188,13 @@
 		"%prey slid into your %dest due to their struggling inside your %belly!")
 
 	var/list/primary_transfer_messages_prey = list(
-		"Your attempt to escape %pred's %belly has failed and your struggles only results in you sliding into pred's %dest!")
+		"Your attempt to escape %pred's %belly has failed and your struggles only results in you sliding into %pred's %dest!")	//RS EDIT
 
 	var/list/secondary_transfer_messages_owner = list(
 		"%prey slid into your %dest due to their struggling inside your %belly!")
 
 	var/list/secondary_transfer_messages_prey = list(
-		"Your attempt to escape %pred's %belly has failed and your struggles only results in you sliding into pred's %dest!")
+		"Your attempt to escape %pred's %belly has failed and your struggles only results in you sliding into %pred's %dest!")	//RS EDIT
 
 	var/list/digest_chance_messages_owner = list(
 		"You feel your %belly beginning to become active!")
@@ -579,6 +579,7 @@
 				L.clear_fullscreen("belly4")
 			var/obj/screen/fullscreen/F5 = L.overlay_fullscreen("belly5", /obj/screen/fullscreen/belly/colorized/overlay) // Reagent bellies || RS Add || Chomp Port
 			F5.icon_state = belly_fullscreen //Reagent bellies || RS Add || Chomp Port
+			F5.cut_overlays() // RS Add: Fix sticky overlays (Lira, November 2025)
 			if(L.liquidbelly_visuals && mush_overlay && (owner.nutrition > 0 || max_mush == 0 || min_mush > 0)) // Reagent bellies start || RS Add || Chomp Port
 				ReagentImages = image('icons/mob/vore/bubbles.dmi', "mush")
 				ReagentImages.color = mush_color
@@ -607,6 +608,7 @@
 			var/obj/screen/fullscreen/F5 = L.overlay_fullscreen("belly5", /obj/screen/fullscreen/belly/colorized/overlay) //Reagent bellies || RS Add || Chomp Port
 			F.icon_state = belly_fullscreen
 			F5.icon_state = belly_fullscreen //Reagent bellies || RS Add || Chomp Port
+			F5.cut_overlays() // RS Add: Fix sticky overlays (Lira, November 2025)
 			if(L.liquidbelly_visuals && mush_overlay && (owner.nutrition > 0 || max_mush == 0 || min_mush > 0)) // Reagent bellies start || RS Add || Chomp Port
 				ReagentImages = image('icons/mob/vore/bubbles.dmi', "mush")
 				ReagentImages.color = mush_color
@@ -668,6 +670,7 @@
 				F4.icon_state = "[belly_fullscreen]_nc"
 			var/obj/screen/fullscreen/F5 = L.overlay_fullscreen("belly5", /obj/screen/fullscreen/belly/colorized/overlay)  //Reagent bellies || RS Add || Chomp Port
 			F5.icon_state = belly_fullscreen //Reagent bellies || RS Add || Chomp Port
+			F5.cut_overlays() // RS Add: Fix sticky overlays (Lira, November 2025)
 			if(L.liquidbelly_visuals && mush_overlay && (owner.nutrition > 0 || max_mush == 0 || min_mush > 0)) // Reagent bellies start || RS Add || Chomp Port
 				ReagentImages = image('icons/mob/vore/bubbles.dmi', "mush")
 				ReagentImages.color = mush_color
@@ -696,6 +699,7 @@
 			var/obj/screen/fullscreen/F5 = L.overlay_fullscreen("belly5", /obj/screen/fullscreen/belly/colorized/overlay) //Reagent bellies || RS Add || Chomp Port
 			F.icon_state = belly_fullscreen
 			F5.icon_state = belly_fullscreen //Reagent bellies || RS Add || Chomp Port
+			F5.cut_overlays() // RS Add: Fix sticky overlays (Lira, November 2025)
 			if(L.liquidbelly_visuals && mush_overlay && (owner.nutrition > 0 || max_mush == 0 || min_mush > 0)) // Reagent bellies start || RS Add || Chomp Port
 				ReagentImages = image('icons/mob/vore/bubbles.dmi', "mush")
 				ReagentImages.color = mush_color
@@ -880,10 +884,16 @@
 
 	if(!owner.ckey && escape_stun)
 		owner.Weaken(escape_stun)
+		owner.post_escape(M)	//RS ADD
 	if(istype(M,/obj/effect/overmap/visitable/ship))	// RS EDIT START
 		var/obj/effect/overmap/visitable/ship/S = M
 		SSskybox.rebuild_skyboxes(S.map_z)	// RS EDIT END
 	return 1
+
+//RS ADD START - POST ESCAPE - in case you want there to be something that happens to a mob when someone escapes!
+/mob/living/proc/post_escape(atom/movable/M)
+	return
+//RS ADD END
 
 // Actually perform the mechanics of devouring the tasty prey.
 // The purpose of this method is to avoid duplicate code, and ensure that all necessary

@@ -29,6 +29,7 @@ beebor - Xenochimera
 belwhix - Shadekin
 beyondmylife - Protean
 bladebloodrose - Shadekin
+bladebloodrose - Black-Eyed Shadekin
 bothnevarbackwards - Diona
 briargarden - Black-Eyed Shadekin
 briargarden - Shadekin Empathy
@@ -65,6 +66,7 @@ digitalsquirrel95 - Protean
 draycu - Vox
 draykenthedragon - Protean
 draykenthedragon - Xenochimera
+drvulpotnic - Black-Eyed Shadekin
 drvulpotnic - Shadekin
 dustyumbry - Diona
 dustyumbry - Xenochimera
@@ -76,6 +78,7 @@ essbie - Black-Eyed Shadekin
 everfire - Shadekin
 exgame - Vox
 falloutdog3 - Black-Eyed Shadekin
+firstsgtdan - Protean
 flaktual - Vox
 flurriee - Protean
 foxfire53 - Xenochimera
@@ -235,6 +238,7 @@ shoanaeackeye - Shadekin
 shoanaeackeye - Black-Eyed Shadekin
 shoanaeackeye - Shadekin Empathy
 shoanaeackeye - Teppi
+shoanaeackeye - Protean
 silencedmp5a5 - Shadekin
 silencedmp5a5 - Teppi
 silenrea - Protean

@@ -1,9 +1,12 @@
 //RS FILE
-#ifdef RP_MAP
+#if defined(RP_MAP)
 	#define DEFAULT_MAP /datum/map/groundbase
+#elif defined(SP_MAP)
+	#define DEFAULT_MAP /datum/map/sirius_point
 #else
 	#define DEFAULT_MAP /datum/map/stellar_delight
 #endif
+
 
 //COMMON STUFF
 #include "tether\tether_jobs.dm"
@@ -28,6 +31,15 @@
 #include "groundbase/groundbase_things.dm"
 #include "groundbase/groundbase_poi_stuff.dm"
 #include "groundbase/groundbase_wilds.dm"
+//SP STUFF
+#include "sirius_point/sirius_point_areas.dm"
+#include "sirius_point/sirius_point_defines.dm"
+#include "sirius_point/sirius_point_shuttle_defs.dm"
+#include "sirius_point/sirius_point_telecomms.dm"
+#include "sirius_point/sirius_point_things.dm"
+#include "sirius_point/sirius_point_turfs.dm"
+#include "sirius_point/submaps/sirius_point_pois.dm"
+
 //Minitest STUFF
 #include "virgo_minitest/virgo_minitest_defines.dm"
 #include "virgo_minitest/virgo_minitest_shuttles.dm"

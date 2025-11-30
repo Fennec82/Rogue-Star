@@ -1,6 +1,6 @@
 //backpack item
-/obj/item/device/medigun_backpack
-	name = "protoype bluespace medigun backpack"
+/obj/item/device/continuous_medigun
+	name = "prototype bluespace medigun backpack"
 	desc = "Contains a bluespace medigun, this portable unit digitizes and stores chems and battery power used by the attached gun."
 	icon = 'code/game/Rogue Star/icons/itemicons/borkmedigun.dmi'
 	icon_override = 'code/game/Rogue Star/icons/itemicons/borkmedigun.dmi'
@@ -17,13 +17,13 @@
 
 	var/obj/item/device/bork_medigun/linked/medigun
 	var/obj/item/weapon/cell/bcell = /obj/item/weapon/cell
+	var/obj/item/weapon/cell/ccell = null
 	var/obj/item/weapon/stock_parts/matter_bin/sbin = /obj/item/weapon/stock_parts/matter_bin
 	var/obj/item/weapon/stock_parts/scanning_module/smodule = /obj/item/weapon/stock_parts/scanning_module
 	var/obj/item/weapon/stock_parts/manipulator/smanipulator = /obj/item/weapon/stock_parts/manipulator
 	var/obj/item/weapon/stock_parts/capacitor/scapacitor = /obj/item/weapon/stock_parts/capacitor
 	var/obj/item/weapon/stock_parts/micro_laser/slaser = /obj/item/weapon/stock_parts/micro_laser
 	var/charging = FALSE
-	var/phoronvol = 0
 	var/brutecharge = 0
 	var/toxcharge = 0
 	var/burncharge = 0
@@ -38,36 +38,53 @@
 	var/sbintier = 1
 	var/gridstatus = 0
 	var/chargecap = 1000
+	var/compact = 0
+	var/busy = FALSE
 	var/kenzie = FALSE
 
-//backpack item
-/obj/item/device/medigun_backpack/cmo
-	name = "prototype bluespace medigun backpack - CMO"
+//belt item
+/obj/item/device/continuous_medigun/compact
+	name = "prototype bluespace medigun backpack - compact"
 	desc = "Contains a compact version of the bluespace medigun able to be used one handed, this portable unit digitizes and stores chems and battery power used by the attached gun."
-	icon_state = "mg-backpack_cmo"
-	item_state = "mg-backpack_cmo-onmob"
-	scapacitor = /obj/item/weapon/stock_parts/capacitor/adv
-	smanipulator = /obj/item/weapon/stock_parts/manipulator/nano
-	smodule = /obj/item/weapon/stock_parts/scanning_module/adv
-	slaser = /obj/item/weapon/stock_parts/micro_laser/high
-	bcell = /obj/item/weapon/cell/apc
-	tankmax = 60
-	brutecharge = 60
-	toxcharge = 60
-	burncharge = 60
-	chemcap = 120
-	brutevol = 120
-	toxvol = 120
-	burnvol = 120
-	chargecap = 5000
+	icon_state = "mg-belt"
+	item_state = "mg-belt-onmob"
+	compact = TRUE
+	w_class = ITEMSIZE_LARGE
+	slot_flags = SLOT_BELT
 
-/obj/item/device/medigun_backpack/proc/is_twohanded()
-	return TRUE
 
-/obj/item/device/medigun_backpack/cmo/is_twohanded()
-	return FALSE
+/obj/item/weapon/paper/continuous_medigun_manual
+	name = "Bluespace LongRange Experimental Medigun manual"
+	info = {"<h4>Bluespace Longrange  Experimental Medigun</h4>
+	<p></p>
+	<p>A prototype bluespace medigun in development by BORK</p>
+	<p></p>
+	<br />
+	<ul>
+		<li>Hello and welcome to your quick field guide for the Blem</li>
+		<li>Device accepts power cells, feel free to bother security!</li>
+		<li>Device is refilled using chems, namely Bicaridine, Dylovene, and Kelotane.</li>
+		<li>Device must be worn to use, backpack variant will fit on your back, while the compact one may be worn as a belt.</li>
+		<li>Device comes with an intuitive and detailed user interface, Just look at the screen for a readout. ((There is an icon on the top left of your screen))</li>
+		<li>Usage is simple, take the medigun into your hands and point at the target you wish to heal, unit will do the rest.</li>
+		<li>Device may be upgraded with parts obtained from science, ensure the maintenance hatch is open before installing.</li>
+		<li>You may open the hatch with either a screwdriver, or through the user interface.</li>
+		<li>Once the maintenance hatch is open, you may either eject everything with a crowbar, or through the user interface under the convienient parts tab.</li>
+		<li>Go forth and spread healthiness, Were counting on you and your feedback to produce a better product!</li>
+		<li>Please forward any feedback and complaints to 'Sari Bork' CEO of Bork Industries.</li>
+	</ul>"}
 
-/obj/item/device/medigun_backpack/proc/apc_charge()
+/obj/item/device/continuous_medigun_modkit
+	name = "Continuous Medigun upgrade kit"
+	desc = "A kit containing all the needed tools and parts to upgrade the BLEM."
+	icon = 'code/game/Rogue Star/icons/itemicons/borkmedigun.dmi'
+	icon_state = "mg-modkit"
+
+
+/obj/item/device/continuous_medigun/proc/is_twohanded()
+	return !compact
+
+/obj/item/device/continuous_medigun/proc/apc_charge()
 	gridstatus = 0
 	var/area/A = get_area(src)
 	if(!istype(A) || !A.powered(EQUIP))
@@ -79,12 +96,27 @@
 		bcell.give(delta)
 		A.use_power_oneoff(delta*100, EQUIP)
 		gridstatus = 2
-		if(charging && ismob(loc))
-			to_chat(loc, span_notice("With the grid connection enabled, the phoron generator sputters then stops."))
-		charging = FALSE
 	return TRUE
 
-/obj/item/device/medigun_backpack/proc/adjust_brutevol(modifier)
+
+/obj/item/device/continuous_medigun/proc/do_upgrade()
+	name = "prototype bluespace medigun backpack - compact"
+	desc = "Contains a compact version of the bluespace medigun able to be used one handed, this portable unit digitizes and stores chems and battery power used by the attached gun."
+	icon_state = "mg-belt"
+	item_state = "mg-belt-onmob"
+	compact = TRUE
+	w_class = ITEMSIZE_LARGE
+	slot_flags = SLOT_BELT
+	medigun.wielded_item_state = ""
+	medigun.wielded = FALSE
+	update_icon()
+	playsound(src,'sound/items/change_drill.ogg',25,1)
+	medigun.wielded_item_state = ""
+	medigun.wielded = FALSE
+	LAZYCLEARLIST(medigun.item_state_slots)
+
+
+/obj/item/device/continuous_medigun/proc/adjust_brutevol(modifier)
 	if(modifier > brutevol)
 		modifier = brutevol
 	if(modifier > (tankmax - brutecharge))
@@ -92,7 +124,7 @@
 	brutevol -= modifier
 	brutecharge += modifier
 
-/obj/item/device/medigun_backpack/proc/adjust_burnvol(modifier)
+/obj/item/device/continuous_medigun/proc/adjust_burnvol(modifier)
 	if(modifier > burnvol)
 		modifier = burnvol
 	if(modifier > (tankmax - burncharge))
@@ -100,7 +132,7 @@
 	burnvol -= modifier
 	burncharge += modifier
 
-/obj/item/device/medigun_backpack/proc/adjust_toxvol(modifier)
+/obj/item/device/continuous_medigun/proc/adjust_toxvol(modifier)
 	if(modifier > toxvol)
 		modifier = toxvol
 	if(modifier > (tankmax - toxcharge))
@@ -108,7 +140,7 @@
 	toxvol -= modifier
 	toxcharge += modifier
 
-/obj/item/device/medigun_backpack/process()
+/obj/item/device/continuous_medigun/process()
 	if(!bcell)
 		return
 
@@ -137,32 +169,30 @@
 
 		if(icon_needs_update)
 			update_icon()
-	else if(!charging && phoronvol > 0)
-		if(ismob(loc))
-			to_chat(loc, span_warning("With a sudden whirr, the phoron generator spins up."))
-		charging = TRUE
 
 	if(scapacitor.get_rating() >= 5)
-		apc_charge()
+		if(apc_charge())
+			charging = FALSE
+			return
+		charging = TRUE
 
-	if(!charging)
+	if(!charging || !ccell)
 		return
-
-	if((bcell.amount_missing() >= 50))
-		if(phoronvol > 0)
-			phoronvol --
-			bcell.give(50)
+	var/missing = min(50, bcell.amount_missing())
+	if((missing > 0))
+		if(ccell && ccell.checked_use(missing))
+			bcell.give(missing)
 			update_icon()
 			return
 
-		if(ismob(loc))
-			to_chat(loc, span_notice("The phoron generator sputters then stops."))
+		//if(ismob(loc))
+			//to_chat(loc, span_notice("The Cell is out of power."))
 		charging = FALSE
 
-/obj/item/device/medigun_backpack/get_cell()
+/obj/item/device/continuous_medigun/get_cell()
 	return bcell
 
-/obj/item/device/medigun_backpack/update_icon()
+/obj/item/device/continuous_medigun/update_icon()
 	. = ..()
 	cut_overlays()
 	if((bcell.percent() <= 5 ))
@@ -185,46 +215,48 @@
 	else if(burncharge <= 0 && burnvol <= 0)
 		add_overlay(image('code/game/Rogue Star/icons/itemicons/borkmedigun.dmi', "orangestrike-blink"))
 
-/obj/item/device/medigun_backpack/proc/replace_icon(inhand)
+/obj/item/device/continuous_medigun/proc/replace_icon(inhand)
+	var/sprite = "-backpack"
+	if(compact)
+		sprite = "-belt"
 	var/special = null
 	if(kenzie)
 		special = "-kenzie"
 	if(inhand)
-		icon_state = "mg-backpack-deployed[special]"
-		item_state = "mg-backpack-deployed-onmob[special]"
+		icon_state = "mg[sprite]-deployed[special]"
+		item_state = "mg[sprite]-deployed-onmob[special]"
 		if(is_twohanded())
 			medigun.icon_state = "medblaster[special]"
 			medigun.base_icon_state = "medblaster[special]"
 			medigun.wielded_item_state = "medblaster[special]-wielded"
 			medigun.update_icon()
 		else
-			medigun.icon_state = "medblaster_cmo[special]"
-			medigun.base_icon_state = "medblaster_cmo[special]"
+			medigun.icon_state = "medblaster-compact[special]"
+			medigun.base_icon_state = "medblaster-compact[special]"
 			medigun.wielded_item_state = ""
 			medigun.update_icon()
 	else if(is_twohanded())
-		icon_state = "mg-backpack[special]"
-		item_state = "mg-backpack-onmob[special]"
+		icon_state = "mg[sprite][special]"
+		item_state = "mg[sprite]-onmob[special]"
 		medigun.icon_state = "medblaster[special]"
 		medigun.base_icon_state = "medblaster[special]"
 	else
-		icon_state = "mg-backpack_cmo[special]"
-		item_state = "mg-backpack_cmo-onmob[special]"
-		medigun.icon_state = "medblaster_cmo[special]"
-		medigun.base_icon_state = "medblaster_cmo[special]"
+		icon_state = "mg[sprite][special]"
+		item_state = "mg[sprite]-onmob[special]"
+		medigun.icon_state = "medblaster-compact[special]"
+		medigun.base_icon_state = "medblaster-compact[special]"
 
 	update_icon()
 
-/obj/item/device/medigun_backpack/Initialize(mapload)
+/obj/item/device/continuous_medigun/Initialize(mapload)
 	. = ..()
 	if(ispath(medigun))
 		medigun = new medigun(src, src)
 	else
 		medigun = new(src, src)
-	if(!is_twohanded())
-		medigun.beam_range = 4
 	if(ispath(bcell))
 		bcell = new bcell(src)
+		bcell.charge = 0
 	if(ispath(sbin))
 		sbin = new sbin(src)
 	if(ispath(smodule))
@@ -239,7 +271,7 @@
 	update_icon()
 
 
-/obj/item/device/medigun_backpack/Destroy()
+/obj/item/device/continuous_medigun/Destroy()
 	STOP_PROCESSING(SSobj, src)
 	QDEL_NULL(medigun)
 	QDEL_NULL(bcell)
@@ -249,50 +281,34 @@
 	QDEL_NULL(slaser)
 	. = ..()
 
-/obj/item/device/medigun_backpack/equipped(var/mob/user, var/slot)
+/obj/item/device/continuous_medigun/equipped(var/mob/user, var/slot)
 
-	//to_chat(world, span_notice("bark [user.real_name] \ [slot] \ [user.ckey]"))
-	if(slot == slot_back || slot == slot_s_store)
+	if(slot == slot_back || slot == slot_belt || slot == slot_s_store)
 		if(user.real_name == "Kenzie Houser" && user.ckey == "memewuff")
 			kenzie = TRUE
 			to_chat(user, span_notice("Epic Lasagna Wolf Detected, Engaging BAD ASS MODE."))
 		else
 			kenzie = FALSE
-			//to_chat(world, span_notice("Not Kenzie"))
 		replace_icon()
 	..()
 
-/obj/item/device/medigun_backpack/ui_action_click()
-	if(charging)
-		to_chat(usr, span_notice("You disable the phoron generator."))
-		charging = FALSE
-		return
 
-	if(phoronvol > 0)
-		to_chat(usr, span_notice("You enable the phoron generator."))
-		charging = TRUE
-		return
 
-	to_chat(usr, span_warning("Not Enough Phoron stored."))
-
-/obj/item/device/medigun_backpack/emp_act(severity)
+/obj/item/device/continuous_medigun/emp_act(severity)
 	. = ..()
 	if(bcell)
 		bcell.emp_act(severity)
+	if(ccell)
+		ccell.emp_act(severity)
 
-/obj/item/device/medigun_backpack/attack_hand(mob/user)
-	/*if(maintenance)
-		maintenance = FALSE
-		to_chat(user, span_notice("You close the maintenance hatch on \the [src]."))
-		return*/
-
+/obj/item/device/continuous_medigun/attack_hand(mob/user)
 	if(loc == user)
 		toggle_medigun()
 		return
 
 	..()
 
-/obj/item/device/medigun_backpack/MouseDrop()
+/obj/item/device/continuous_medigun/MouseDrop()
 	if(ismob(src.loc))
 		if(!CanMouseDrop(src))
 			return
@@ -301,19 +317,22 @@
 			return
 		src.add_fingerprint(usr)
 		M.put_in_any_hand_if_possible(src)
-		/*icon_state = "mg-backpack"
-		item_state = "mg-backpack-onmob"
-		update_icon() //success
-		usr.update_inv_back()*/
 
 
-/obj/item/device/medigun_backpack/attackby(obj/item/weapon/W, mob/user, params)
+
+/obj/item/device/continuous_medigun/attackby(obj/item/weapon/W, mob/user, params)
 	if(refill_reagent(W, user))
 		return
 	if(W == medigun)
-		//to_chat(user, span_warning("backpack clicked with gun"))
 		reattach_medigun(user)
 		return
+	if(istype(W, /obj/item/device/continuous_medigun_modkit))
+		if(slot_check())
+			to_chat(user, span_notice("Please place \the [src] on the ground before upgrading."))
+			return
+		to_chat(user, span_notice("You convert and upgrade \the [src] to be more compact."))
+		do_upgrade()
+		qdel(W)
 	if(W.is_crowbar() && maintenance)
 		if(smodule )
 			smodule.forceMove(get_turf(loc))
@@ -354,123 +373,210 @@
 		maintenance = FALSE
 		to_chat(user, span_notice("You close the maintenance hatch on \the [src]."))
 		return
+	if(istype(W, /obj/item/weapon/cell/device))
+		busy = TRUE
+		if(!do_after(user, 10))
+			busy = FALSE
+			return
+		busy = FALSE
+		if(!user.unEquip(W))
+			return
+		if(ccell)
+			if(!user.put_in_hands(ccell))
+				ccell.forceMove(get_turf(loc))
+			to_chat(user, span_notice("You Swap the [W] for \the [ccell]."))
+			playsound(src, 'sound/weapons/flipblade.ogg', 25, 1)
+		if(!ccell)
+			to_chat(user, span_notice("You install the [W] into \the [src]."))
+			playsound(src, 'sound/weapons/flipblade.ogg', 25, 1)
+		W.forceMove(src)
+		ccell = W
+		charging = TRUE
+		return
+
 
 	if(maintenance)
-		if(istype(W, /obj/item/weapon/stock_parts/scanning_module))
-			if(smodule)
-				to_chat(user, span_notice("\The [src] already has a scanning module."))
-			else
+		if(busy == FALSE)
+			if(istype(W, /obj/item/weapon/stock_parts/scanning_module))
+				if(smodule)
+					if(W.type == smodule.type)
+						to_chat(user, span_notice("\The [src] already has a [W]."))
+						return
+				busy = TRUE
+				if(!do_after(user, 10))
+					busy = FALSE
+					return
+				busy = FALSE
 				if(!user.unEquip(W))
 					return
+				if(smodule)
+					if(!user.put_in_hands(smodule))
+						smodule.forceMove(get_turf(loc))
+					to_chat(user, span_notice("You Swap the [W] for \the [smodule]."))
+					playsound(src, 'sound/weapons/flipblade.ogg', 25, 1)
+				if(!smodule)
+					to_chat(user, span_notice("You install the [W] into \the [src]."))
+					playsound(src, 'sound/weapons/flipblade.ogg', 25, 1)
 				W.forceMove(src)
 				smodule = W
-				to_chat(user, span_notice("You install the [W] into \the [src]."))
 				medigun.beam_range = 3+smodule.get_rating()
 				update_icon()
 				return
 
-		if(istype(W, /obj/item/weapon/stock_parts/manipulator))
-			if(smanipulator)
-				to_chat(user, span_notice("\The [src] already has a manipulator."))
+			if(istype(W, /obj/item/weapon/stock_parts/manipulator))
+				if(smanipulator)
+					if(W.type == smanipulator.type)
+						to_chat(user, span_notice("\The [src] already has a [smanipulator]."))
+						return
+				busy = TRUE
+				if(!do_after(user, 10))
+					busy = FALSE
+					return
+				busy = FALSE
+				if(!user.unEquip(W))
+					return
+				if(smanipulator)
+					if(!user.put_in_hands(smanipulator))
+						smanipulator.forceMove(get_turf(loc))
+					to_chat(user, span_notice("You Swap the [W] for \the [smanipulator]."))
+					playsound(src, 'sound/weapons/flipblade.ogg', 25, 1)
+				if(!smanipulator)
+					to_chat(user, span_notice("You install the [W] into \the [src]."))
+					playsound(src, 'sound/weapons/flipblade.ogg', 25, 1)
+				W.forceMove(src)
+				smanipulator = W
+				smaniptier = smanipulator.get_rating()
+				if(sbin && scapacitor)START_PROCESSING(SSobj, src)
+				update_icon()
 				return
-			if(!user.unEquip(W))
-				return
-			W.forceMove(src)
-			smanipulator = W
-			smaniptier = smanipulator.get_rating()
-			if(sbin && scapacitor)START_PROCESSING(SSobj, src)
-			to_chat(user, span_notice("You install the [W] into \the [src]."))
-			update_icon()
-			return
 
-		if(istype(W, /obj/item/weapon/stock_parts/micro_laser))
-			if(slaser)
-				to_chat(user, span_notice("\The [src] already has a micro laser."))
+			if(istype(W, /obj/item/weapon/stock_parts/micro_laser))
+				if(slaser)
+					if(W.type == slaser.type)
+						to_chat(user, span_notice("\The [src] already has a [slaser]."))
+						return
+				busy = TRUE
+				if(!do_after(user, 10))
+					busy = FALSE
+					return
+				busy = FALSE
+				if(!user.unEquip(W))
+					return
+				if(slaser)
+					if(!user.put_in_hands(slaser))
+						slaser.forceMove(get_turf(loc))
+					to_chat(user, span_notice("You Swap the [W] for \the [slaser]."))
+					playsound(src, 'sound/weapons/flipblade.ogg', 25, 1)
+				if(!slaser)
+					to_chat(user, span_notice("You install the [W] into \the [src]."))
+					playsound(src, 'sound/weapons/flipblade.ogg', 25, 1)
+				W.forceMove(src)
+				slaser = W
+				update_icon()
 				return
-			if(!user.unEquip(W))
-				return
-			W.forceMove(src)
-			slaser = W
-			to_chat(user, span_notice("You install the [W] into \the [src]."))
-			update_icon()
-			return
 
-		if(istype(W, /obj/item/weapon/stock_parts/capacitor))
-			if(scapacitor)
-				to_chat(user, span_notice("\The [src] already has a capacitor."))
-				return
-			if(!user.unEquip(W))
-				return
-			W.forceMove(src)
-			scapacitor = W
-			var/scaptier = scapacitor.get_rating()
-			if(scaptier == 1)
-				chargecap = 1000
-				bcell.maxcharge = 1000
-				if(bcell.charge > chargecap)
-					bcell.charge = chargecap
-			else if(scaptier == 2)
-				chargecap = 5000
-				bcell.maxcharge = 5000
-				if(bcell.charge > chargecap)
-					bcell.charge = chargecap
-			else if(scaptier == 3)
-				chargecap = 10000
-				bcell.maxcharge = 10000
-				if(bcell.charge > chargecap)
-					bcell.charge = chargecap
-			else if(scaptier == 4)
-				chargecap = 20000
-				bcell.maxcharge = 20000
-				if(bcell.charge > chargecap)
-					bcell.charge = chargecap
-			else if(scaptier == 5)
-				chargecap = 30000
-				bcell.maxcharge = 30000
-				if(bcell.charge > chargecap)
-					bcell.charge = chargecap
+			if(istype(W, /obj/item/weapon/stock_parts/capacitor))
+				if(scapacitor)
+					if(W.type == scapacitor.type)
+						to_chat(user, span_notice("\The [src] already has a [scapacitor]."))
+						return
+				busy = TRUE
+				if(!do_after(user, 10))
+					busy = FALSE
+					return
+				busy = FALSE
+				if(!user.unEquip(W))
+					return
+				if(scapacitor)
+					if(!user.put_in_hands(scapacitor))
+						scapacitor.forceMove(get_turf(loc))
+					to_chat(user, span_notice("You Swap the [W] for \the [scapacitor]."))
+					playsound(src, 'sound/weapons/flipblade.ogg', 25, 1)
+				if(!scapacitor)
+					to_chat(user, span_notice("You install the [W] into \the [src]."))
+					playsound(src, 'sound/weapons/flipblade.ogg', 25, 1)
+				W.forceMove(src)
+				scapacitor = W
+				var/scaptier = scapacitor.get_rating()
+				if(scaptier == 1)
+					chargecap = 1000
+					bcell.maxcharge = 1000
+					if(bcell.charge > chargecap)
+						bcell.charge = chargecap
+				else if(scaptier == 2)
+					chargecap = 2000
+					bcell.maxcharge = 2000
+					if(bcell.charge > chargecap)
+						bcell.charge = chargecap
+				else if(scaptier == 3)
+					chargecap = 3000
+					bcell.maxcharge = 3000
+					if(bcell.charge > chargecap)
+						bcell.charge = chargecap
+				else if(scaptier == 4)
+					chargecap = 4000
+					bcell.maxcharge = 4000
+					if(bcell.charge > chargecap)
+						bcell.charge = chargecap
+				else if(scaptier == 5)
+					chargecap = 5000
+					bcell.maxcharge = 5000
+					if(bcell.charge > chargecap)
+						bcell.charge = chargecap
 
-			if(sbin && smanipulator)START_PROCESSING(SSobj, src)
-			to_chat(user, span_notice("You install the [W] into \the [src]."))
-			update_icon()
-			return
+				if(sbin && smanipulator)START_PROCESSING(SSobj, src)
+				update_icon()
+				return
 
-		if(istype(W, /obj/item/weapon/stock_parts/matter_bin))
-			if(sbin)
-				to_chat(user, span_notice("\The [src] already has a matter bin."))
+			if(istype(W, /obj/item/weapon/stock_parts/matter_bin))
+				if(sbin)
+					if(W.type == sbin.type)
+						to_chat(user, span_notice("\The [src] already has a matter bin."))
+						return
+				busy = TRUE
+				if(!do_after(user, 10))
+					busy = FALSE
+					return
+				busy = FALSE
+				if(!user.unEquip(W))
+					return
+				if(sbin)
+					if(!user.put_in_hands(sbin))
+						sbin.forceMove(get_turf(loc))
+					to_chat(user, span_notice("You Swap the [W] for \the [sbin]."))
+					playsound(src, 'sound/weapons/flipblade.ogg', 25, 1)
+				if(!sbin)
+					to_chat(user, span_notice("You install the [W] into \the [src]."))
+					playsound(src, 'sound/weapons/flipblade.ogg', 25, 1)
+				W.forceMove(src)
+				sbin = W
+				sbintier = sbin.get_rating()
+				if(sbintier >= 5)
+					chemcap = 300
+					tankmax = 150
+				else
+					chemcap = 60*(sbintier)
+					tankmax = 30*sbintier
+				if(brutecharge > chemcap)
+					brutecharge = chemcap
+				if(burncharge > chemcap)
+					burncharge = chemcap
+				if(toxcharge > chemcap)
+					toxcharge = chemcap
+				if(brutecharge > tankmax)
+					brutecharge = tankmax
+				if(burncharge > tankmax)
+					burncharge = tankmax
+				if(toxcharge > tankmax)
+					toxcharge = tankmax
+				if(scapacitor && smanipulator)START_PROCESSING(SSobj, src)
+				update_icon()
 				return
-			if(!user.unEquip(W))
-				return
-			W.forceMove(src)
-			sbin = W
-			sbintier = sbin.get_rating()
-			if(sbintier >= 5)
-				chemcap = 300
-				tankmax = 150
-			else
-				chemcap = 60*(sbintier)
-				tankmax = 30*sbintier
-			if(brutecharge > chemcap)
-				brutecharge = chemcap
-			if(burncharge > chemcap)
-				burncharge = chemcap
-			if(toxcharge > chemcap)
-				toxcharge = chemcap
-			if(brutecharge > tankmax)
-				brutecharge = tankmax
-			if(burncharge > tankmax)
-				burncharge = tankmax
-			if(toxcharge > tankmax)
-				toxcharge = tankmax
-			if(scapacitor && smanipulator)START_PROCESSING(SSobj, src)
-			to_chat(user, span_notice("You install the [W] into \the [src]."))
-			update_icon()
-			return
 
 	return ..()
 
 
-/obj/item/device/medigun_backpack/proc/refill_reagent(var/obj/item/weapon/container, mob/user)
+/obj/item/device/continuous_medigun/proc/refill_reagent(var/obj/item/weapon/container, mob/user)
 	. = FALSE
 	if(!maintenance && (istype(container, /obj/item/weapon/reagent_containers/glass/beaker) || istype(container, /obj/item/weapon/reagent_containers/glass/bottle)))
 
@@ -478,7 +584,7 @@
 			to_chat(user, span_warning("You need to open the [container] first!"))
 			return
 
-		var/reagentwhitelist = list("bicaridine", "anti_toxin", "kelotane", "dermaline", "phoron")//, "tricordrazine")
+		var/reagentwhitelist = list("bicaridine", "anti_toxin", "kelotane", "dermaline")//, "tricordrazine")
 
 		for(var/G in container.reagents.reagent_list)
 			var/datum/reagent/R = G
@@ -504,17 +610,6 @@
 						name = "burnheal"
 						modifier = 8
 						totransfer = chemcap - burnvol
-					if("phoron")
-						name = "phoron"
-						modifier = 1
-						totransfer = chemcap - phoronvol
-					/*if("tricordrazine")
-						name = "tricordrazine"
-						modifier = 1
-						if((brutevol != chemcap) && (burnvol != chemcap) && (toxvol != chemcap))
-							totransfer = 1  //tempcheck to get past the totransfer check
-						else
-							totransfer = 0*/
 				if(totransfer <= 0)
 					to_chat(user, span_notice("The [src] cannot accept anymore [name]!"))
 				totransfer = min(totransfer, container.reagents.get_reagent_amount(R.id) * modifier)
@@ -528,42 +623,6 @@
 						burnvol += totransfer
 					if("dermaline")
 						burnvol += totransfer
-					if("phoron")
-						phoronvol += totransfer
-					/*if("tricordrazine") //Tricord too problematic
-						var/maxamount = container.reagents.get_reagent_amount(R.id)
-						var/amountused
-						var/oldbrute = brutevol
-						var/oldburn = burnvol
-						var/oldtox = toxvol
-
-						while(maxamount > 0)
-							if(brutevol >= chemcap && burnvol >= chemcap && toxvol >= chemcap)
-								break
-							maxamount --
-							amountused++
-							totransfer ++
-							if(brutevol < chemcap)
-								brutevol ++
-							if(burnvol < chemcap)
-								burnvol ++
-							if(toxvol < chemcap)
-								toxvol ++
-						var/readout = "You add [amountused] units of [R.name] to the [src]. \n The [src] Stores "
-						var/readoutadditions = FALSE
-						if(oldbrute != brutevol)
-							readout += "[round(brutevol - oldbrute)] U of bruteheal vol"
-							readoutadditions = TRUE
-						if(oldburn != burnvol)
-							if(readoutadditions)
-								readout += ", "
-							readout += "[round(burnvol - oldburn)] U of burnheal vol"
-							readoutadditions = TRUE
-						if(oldtox != toxvol)
-							if(readoutadditions)
-								readout += ", "
-							readout += "[round(toxvol - oldtox)] U of toxheal vol"
-						if(oldbrute != brutevol || oldburn != burnvol || oldtox != toxvol)to_chat(user, span_notice("[readout]."))*/
 				if(totransfer > 0)
 					if(R.id != "tricordrazine")
 						to_chat(user, span_notice("You add [totransfer / modifier] units of [R.name] to [src]. \n [src] stores [round(totransfer)] U of [name]."))
@@ -574,7 +633,7 @@
 	return
 
 //checks that the base unit is in the correct slot to be used
-/obj/item/device/medigun_backpack/proc/slot_check()
+/obj/item/device/continuous_medigun/proc/slot_check()
 	var/mob/M = loc
 	if(!istype(M))
 		return FALSE //not equipped
@@ -583,18 +642,19 @@
 		return TRUE
 	if((slot_flags & SLOT_BACK) && M.get_equipped_item(slot_s_store) == src)
 		return TRUE
+	if((slot_flags & SLOT_BELT) && M.get_equipped_item(slot_belt) == src)
+		return TRUE
 	return FALSE
 
-/obj/item/device/medigun_backpack/dropped(mob/user)
+/obj/item/device/continuous_medigun/dropped(mob/user)
 	..()
 	kenzie = FALSE
 	replace_icon()
 	reattach_medigun(user) //medigun attached to a base unit should never exist outside of their base unit or the mob equipping the base unit
 
-/obj/item/device/medigun_backpack/proc/reattach_medigun(mob/user)
+/obj/item/device/continuous_medigun/proc/reattach_medigun(mob/user)
 	if(containsgun)
 		return
-
 	containsgun = TRUE
 	if(!medigun)
 		return
@@ -607,9 +667,8 @@
 		if(M.drop_from_inventory(medigun, src))
 			to_chat(user, span_notice("\The [medigun] snaps back into the main unit."))
 		return
-
 	medigun.forceMove(src)
 	to_chat(user, span_notice("\The [medigun] snaps back into the main unit."))
 
-/obj/item/device/medigun_backpack/proc/checked_use(var/charge_amt)
+/obj/item/device/continuous_medigun/proc/checked_use(var/charge_amt)
 	return (bcell && bcell.checked_use(charge_amt))

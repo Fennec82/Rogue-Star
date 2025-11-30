@@ -16,6 +16,7 @@
 	icon_state = "deer"
 	icon_living = "deer"
 	icon_dead = "deer_dead"
+	var/icon_run_over = "deer_dead_alt"
 	icon_rest = "deer_rest"
 	icon = 'icons/rogue-star/mobx32.dmi'
 
@@ -44,6 +45,11 @@
 
 	has_langs = list(LANGUAGE_ANIMAL)
 	say_list_type = /datum/say_list/deer
+
+	hunter = TRUE
+	food_pref = HERBIVORE
+	food_pref_obligate = TRUE
+
 	var/run_over = FALSE	//teehee
 
 /////////////////////////////////////// Vore stuff///////////////////////////////////////////
@@ -281,6 +287,29 @@
 	emote_hear = list("grunts", "chuffs", "huffs", "bellows", "bleats")
 	emote_see = list("turns its head", "looks at you", "flicks its tail", "nibbles something off of the ground", "looks around", "stops and stares at something in the distance")
 
+/mob/living/simple_mob/vore/deer/New()
+	if(world_time_season == "winter" && icon_living == "deer")
+		var/chance = rand(1,100)
+		if(chance == 100)
+			icon_living = "r-deer"
+		else if(chance > 75)
+			icon_living = "h-deer"
+
+	if(icon_living == "h-deer")	//Hat
+		icon_state = icon_living
+		ai_holder_type = /datum/ai_holder/simple_mob/retaliate
+		maxHealth = 250
+		health = 250
+	if(icon_living == "r-deer")	//Nose
+		icon_state = icon_living
+		has_eye_glow = TRUE
+		update_icon()
+		ai_holder_type = /datum/ai_holder/simple_mob/retaliate
+		maxHealth = 500
+		health = 500
+
+	. = ..()
+
 /mob/living/simple_mob/vore/deer/Bumped(atom/movable/AM, yes)
 	if(istype(AM, /obj/vehicle) && stat != DEAD)
 		run_over = TRUE
@@ -289,15 +318,16 @@
 	else ..()
 
 /mob/living/simple_mob/vore/deer/update_icon()
-	. = ..()
 	if(run_over)
-		icon_state = "deer_dead_alt"
+		icon_state = icon_run_over
+	. = ..()
 
 /mob/living/simple_mob/vore/deer/Crossed(atom/movable/AM)
-	if(istype(AM, /obj/vehicle) && stat != DEAD)
-		run_over = TRUE
-		visible_emote("is run over by \the [AM]!!!")
-		death()
+	if(icon_run_over && stat != DEAD)
+		if(istype(AM, /obj/vehicle))
+			run_over = TRUE
+			visible_emote("is run over by \the [AM]!!!")
+			death()
 	else ..()
 
 /datum/ai_holder/simple_mob/evasive
@@ -308,3 +338,9 @@
 	flee_when_outmatched = TRUE
 	outmatched_threshold = 25
 	cooperative = TRUE
+
+/mob/living/simple_mob/vore/deer/hat
+	icon_living = "h-deer"
+
+/mob/living/simple_mob/vore/deer/nose
+	icon_living = "r-deer"

@@ -1,3 +1,8 @@
+**File:** `icons/inventory/face/mob.dmi`<br>
+**Icon-States:** `hosmask`,`wardenmask`,`officermask`<br>
+**Creator:** Unknown, icon states modified from icons/inventory/face/mob_unathi.dmi by Sad Starfish<br>
+**License:** [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)<br>
+<br>
 **File:** `maps/tether/submaps/om_ships/aro2.dmi`<br>
 **Creator:** Nia Tahl, deriv by Aronai.<br>
 **License:** [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)<br>
@@ -67,17 +72,17 @@
 <br>
 ### ROGUE STAR SPECIFIC ATTRIBUTIONS
 **File**: `icons/mob/screen_full_vore.dmi`<br>
-**Icon-States:** `anibelly`, `totally_mawful`, `further_mawful`, `robot`, and `beak`<br>
+**Icon-States:** `anibelly`, `totally_mawful`, `further_mawful`, `robot`, `beak`, and `semitrans`<br>
 **Creator:** VerySoft<br>
 **License:** Licensed for use by Rogue Star; unlicensed for further use without permission of copyright holder<br>
 <br>
 **File**: `icons/mob/screen_full_colorized_vore.dmi`<br>
-**Icon-States:** `anibelly`, `totally_mawful`, `robot`, and `beak`<br>
+**Icon-States:** `anibelly`, `totally_mawful`, `robot`, `beak`, and `semitrans`<br>
 **Creator:** VerySoft<br>
 **License:** Licensed for use by Rogue Star; unlicensed for further use without permission of copyright holder<br>
 <br>
 **File**: `icons/mob/screen_full_colorized_vore_overlays.dmi`<br>
-**Icon-States:** `totally_mawful_nc`, `further_mawful_nc`, `robot_l1`, `robot_l2` `beak_l1`,`beak_l2`, and `beak_nc`<br>
+**Icon-States:** `totally_mawful_nc`, `further_mawful_nc`, `robot_l1`, `robot_l2` `beak_l1`,`beak_l2`, `beak_nc`, and `semitrans_nc`<br>
 **Creator:** VerySoft<br>
 **License:** Licensed for use by Rogue Star; unlicensed for further use without permission of copyright holder<br>
 <br>
@@ -495,8 +500,91 @@ digi-inner-thighs
 **Link:** https://github.com/TS-Rogue-Star/Rogue-Star/pull/1010<br>
 **License:** [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)<br>
 <br>
-File: icons/mob/items/modifier_effects.dmi<br> 
+File: `icons/mob/items/modifier_effects.dmi`<br> 
 Icon-States:medigun_effect<br> 
 Creator: Commissioned by Cross_Exonar from Toriate<br> 
 Link: https://github.com/TS-Rogue-Star/Rogue-Star/pull/1010<br> 
 **License:** [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)<br>
+<br>
+Files: `sound/voice/augh1.ogg,sound/voice/augh2.ogg`<br> 
+Creator: Whatislegs<br> 
+Link: https://github.com/TS-Rogue-Star/Rogue-Star/pull/1041<br> 
+**License:** [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)<br>
+<br>
+**File:** `icons/turf/fancy_shuttles/sp_shuttle_preview.dmi`<br>
+**Creator:** Modified by AutumnWolf from sd_shuttle.dmi<br>
+**Link:** https://github.com/TS-Rogue-Star/Rogue-Star/pull/1034<br>
+**License:** [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)<br>
+<br>
+**File:** `maps/sirius_point/sirius_point_decals.dmi`<br>
+**Creator:** VerySoft <br>
+**Link:** https://github.com/TS-Rogue-Star/Rogue-Star/pull/1034<br>
+**License:** [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)<br>
+<br>
+**File:** `maps/sirius_point/sp_asteroid.dmi,maps/sirius_point/sp_asteroid_edge.dmi`<br>
+**Creator:** Altered by AutumnWolf from asteroid.dmi<br>
+**Link:** https://github.com/TS-Rogue-Star/Rogue-Star/pull/1034<br>
+**License:** [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)<br>
+<br>
+**File:** `maps/sirius_point/sp_asteroid_wall.dmi`<br>
+**Creator:** Altered by AutumnWolf from walls.dmi<br>
+**Link:** https://github.com/TS-Rogue-Star/Rogue-Star/pull/1034<br>
+**License:** [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)
+<br>
+**File:** `icons/effects/weather.dmi`<br>
+**Creator:** AutumnWolf <br>
+**Icon-States:** purpleanomaly<br>
+**Link:** https://github.com/TS-Rogue-Star/Rogue-Star/pull/1034<br>
+**License:** [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)<br>
+Files: `icons/mob/vore/tails_64x32.dmi, icons/mob/vore/Taur_Bellies.dmi`<br>
+Icon-States: eighttailkitsunetaur, ChristyKitsune, ChristyKitsuneTaur, Taur-CKT-1 idle, Taur-CKT-2 idle, Taur-CKT-3 idle <br> 
+Creator: Kligor<br> 
+Link: https://github.com/TS-Rogue-Star/Rogue-Star/pull/1063<br> 
+**License:** eighttailkitsunetaur is under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/), all others (ckey locked sprites listed above) are unliscened for further use without permission of character owner<br>
+<br>
+**File:** `icons/mob/robot/fluff_wide_rs.dmi`<br>
+**Icon-States:** googlyfox-aurum-serv, googlyfox-aurum-serv-eyes, googlyfox-aurum-serv-wreck, googlyfox-aurum-serv-rest, googlyfox-aurum-serv-belly-1-rest, googlyfox-aurum-serv-belly-2-rest, googlyfox-aurum-serv-sit, googlyfox-aurum-serv-belly-1-sit, googlyfox-aurum-serv-belly-2-sit, googlyfox-aurum-serv-bellyup, googlyfox-aurum-serv-belly-1-bellyup, googlyfox-aurum-serv-belly-2-bellyup, googlyfox-aurum-serv-belly-1, googlyfox-aurum-serv-sleeper-1, googlyfox-aurum-serv-belly-2, googlyfox-aurum-serv-throat-1, googlyfox-aurum-serv-lights<br>
+**Creator:** ChromeFoxxity<br>
+Link: https://github.com/TS-Rogue-Star/Rogue-Star/pull/987<br>
+**License: Licensed for use by Rogue Star; unlicensed for further use without permission of developing player<br>
+<br>
+**File:** `icons/vore/custom_clothes_rs.dmi, icons/vore/custom_onmob_rs.dmi`<br>
+**Icon-States:** portalcap_mob, portalcap<br>
+**Creator:** Original graphics by Imaginos16, Modified by GooglyFox<br>
+**Link:** https://github.com/tgstation/tgstation/pull/66202
+**License:** https://creativecommons.org/licenses/by-sa/3.0/<br>
+<br>
+**File:** `icons/vore/custom_clothes_rs.dmi, icons/vore/custom_onmob_rs.dmi`<br>
+**Icon-States:** portaljacket_mob, portaljacket<br>
+**Creator:** Original graphics by OrionTheFox, Modified by GooglyFox<br>
+**Link:** https://github.com/tgstation/tgstation/pull/77964
+**License:** https://creativecommons.org/licenses/by-sa/3.0/<br>
+<br>
+**File:** `icons/vore/custom_clothes_rs.dmi, icons/vore/custom_onmob_rs.dmi`<br>
+**Icon-States:** portalboots_mob, portalboots, portaluniform_mob, portaluniform, portalgloves_mob, portalgloves<br>
+**Creator:** Original graphics by Ebin-Halcyon, Modified by GooglyFox<br>
+**Link:** https://github.com/Skyrat-SS13/Skyrat-tg/pull/10737
+**License:** https://creativecommons.org/licenses/by-sa/3.0/<br>
+<br>
+**File:** `icons/vore/custom_clothes_rs.dmi, icons/vore/custom_onmob_rs.dmi`<br>
+**Icon-States:** portalbag_mob, portalbag<br>
+**Creator:** Original graphics by GuillaumePrata, Modified by GooglyFox<br>
+**Link:** https://github.com/tgstation/tgstation/pull/70220
+**License:** https://creativecommons.org/licenses/by-sa/3.0/<br>
+<br>
+**File:** `tails_64x32_rs.dmi`<br>
+**Icon-States:** bigfluffytail2<br>
+**Creator:** Original graphics by VerySoft, Modified by GooglyFox<br>
+**Link:** https://github.com/TS-Rogue-Star/Rogue-Star/pull/737
+**License:** Restricted modifications, but specific permission was given.<br>
+<br>
+**File:** `custom_items_rs.dmi, icons/vore/custom_clothes_rs.dmi, icons/vore/custom_onmob_rs.dmi`<br>
+**Icon-States:** portal, portalmask_mob, portalmask<br>
+**Creator:** Created by GooglyFox<br>
+**License:** Licensed for use by Rogue Star; unlicensed for further use without permission of developing player.<br>
+<br>
+**File**: `tgui/public/icons/Rogue Star`<br>
+**Creator:** VerySoft<br>
+**License:** Licensed for use by Rogue Star; unlicensed for further use without permission of copyright holder<br>
+**Notes:** All files and icon-states within this folder are covered under the above license, as per the included attribution.txt file
+<br>
