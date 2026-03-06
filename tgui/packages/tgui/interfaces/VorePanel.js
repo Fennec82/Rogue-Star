@@ -585,6 +585,7 @@ const VoreSelectedBellyOptions = (props, context) => {
     egg_type,
     selective_preference,
     save_digest_mode,
+    allow_external_feeding, // RS Add: Allow external feeding option (Lira, January 2026)
     eating_privacy_local,
     silicon_belly_overlay_preference,
     visible_belly_minimum_prey,
@@ -686,6 +687,17 @@ const VoreSelectedBellyOptions = (props, context) => {
               icon={save_digest_mode ? 'toggle-on' : 'toggle-off'}
               selected={save_digest_mode}
               content={save_digest_mode ? 'True' : 'False'}
+            />
+          </LabeledList.Item>
+          {/* RS Add: Allow external feeding option (Lira, January 2026) */}
+          <LabeledList.Item label="Allow External Feeding">
+            <Button
+              onClick={() =>
+                act('set_attribute', { attribute: 'b_allow_external_feeding' })
+              }
+              icon={allow_external_feeding ? 'toggle-on' : 'toggle-off'}
+              selected={allow_external_feeding}
+              content={allow_external_feeding ? 'Yes' : 'No'}
             />
           </LabeledList.Item>
         </LabeledList>
@@ -844,14 +856,8 @@ const VoreSelectedMobTypeBellyButtons = (props, context) => {
         </LabeledList>
       </Section>
     );
-  } else if (is_vore_simple_mob) {
-    return (
-      // For now, we're only returning empty. TODO: Simple mob belly controls
-      <LabeledList>
-        <LabeledList.Item />
-      </LabeledList>
-    );
   } else {
+    // RS Edit - Sonar
     return (
       // Returning Empty element
       <LabeledList>
@@ -2158,6 +2164,7 @@ const VoreUserPreferences = (props, context) => {
     slip_vore,
     throw_vore,
     food_vore,
+    emote_vore, // RS Add: New emote spont vore (Lira, February 2026)
     spont_belly_prefs, // Spont vore prefs (Lira, January 2026)
     nutrition_message_visible,
     weight_message_visible,
@@ -2225,6 +2232,14 @@ const VoreUserPreferences = (props, context) => {
       label: 'Food Vore Belly',
       tooltip:
         'Food vore (micros in food/drink) will place prey into this belly. ' +
+        'Select "Default (Selected Belly)" to clear.',
+    },
+    // New emote spont vore (Lira, February 2026)
+    {
+      key: 'Emote Vore',
+      label: 'Emote Vore Belly',
+      tooltip:
+        'Emote vore from Say/Whisper/Subtle/Emote will place prey into this belly. ' +
         'Select "Default (Selected Belly)" to clear.',
     },
   ];
@@ -2502,6 +2517,26 @@ const VoreUserPreferences = (props, context) => {
         enabled: 'Food Vore Enabled',
         trustlist: 'Food Vore: Trust List', // RS Add: Trustlist integration (Lira, September 2025)
         disabled: 'Food Vore Disabled',
+      },
+    },
+    // RS Add: New emote spont vore (Lira, February 2026)
+    toggle_emote_vore: {
+      id: 'emote_vore',
+      state: prefState(emote_vore, 'Emote Vore'),
+      action: 'toggle_emote_vore',
+      test: emote_vore,
+      tooltip: {
+        main:
+          'Allows emote-triggered spontaneous vore via Say/Whisper/Subtle/Emote input. ' +
+          'Note, you still need spontaneous vore pred and/or prey enabled.',
+        enable: 'Click here to allow emote vore.',
+        trustlist: 'Click here to restrict emote vore to trusted users.',
+        disable: 'Click here to disable emote vore.',
+      },
+      content: {
+        enabled: 'Emote Vore Enabled',
+        trustlist: 'Emote Vore: Trust List',
+        disabled: 'Emote Vore Disabled',
       },
     },
     inbelly_spawning: {
@@ -2899,6 +2934,11 @@ const VoreUserPreferences = (props, context) => {
           <Flex.Item basis="32%">
             <VoreUserPreferenceItem spec={preferences.toggle_food_vore} />
           </Flex.Item>
+          {/* RS Add Start: New emote spont vore (Lira, February 2026) */}
+          <Flex.Item basis="32%">
+            <VoreUserPreferenceItem spec={preferences.toggle_emote_vore} />
+          </Flex.Item>
+          {/* RS Add End */}
           <Flex.Item basis="32%">
             <VoreUserPreferenceItem spec={preferences.resize} />
           </Flex.Item>

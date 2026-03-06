@@ -68,6 +68,12 @@ var/static/list/vore_trustlist_preference_map = list(
 		"client_var" = "food_vore",
 		"trust_key" = FOOD_VORE,
 	),
+	// RS Add: New emote spont vore (Lira, February 2026)
+	"emote_vore" = list(
+		"host_var" = "emote_vore",
+		"client_var" = "emote_vore",
+		"trust_key" = EMOTE_VORE,
+	),
 	"pickup_pref" = list(
 		"host_var" = "pickup_pref",
 		"client_var" = "pickup_pref",
@@ -93,7 +99,8 @@ var/static/list/spontaneous_belly_pref_keys = list(
 	STUMBLE_VORE,
 	BUCKLE_VORE,
 	THROW_VORE,
-	FOOD_VORE
+	FOOD_VORE,
+	EMOTE_VORE
 )
 
 // RS Add Start: Add RSUI healthbars to vore panel (Lira, October 2025)
@@ -409,6 +416,7 @@ var/global/list/rsui_healthbar_preview_cache = list()
 			"digest_clone" = selected.digest_clone,
 			"bulge_size" = selected.bulge_size,
 			"save_digest_mode" = selected.save_digest_mode,
+			"allow_external_feeding" = selected.allow_external_feeding, // RS Add: Allow external feeding option (Lira, January 2026)
 			"display_absorbed_examine" = selected.display_absorbed_examine,
 			"shrink_grow_size" = selected.shrink_grow_size,
 			"emote_time" = selected.emote_time,
@@ -619,6 +627,7 @@ var/global/list/rsui_healthbar_preview_cache = list()
 		"buckle_vore" = host.buckle_vore, // RS Add: Split from stumble (Lira, January 2026)
 		"throw_vore" = host.throw_vore,
 		"food_vore" = host.food_vore,
+		"emote_vore" = host.emote_vore, // RS Add: New emote spont vore (Lira, February 2026)
 		"spont_belly_prefs" = islist(host.spont_belly_prefs) ? host.spont_belly_prefs.Copy() : list(), // RS Add: Spont vore prefs (Lira, January 2026)
 		"nutrition_message_visible" = host.nutrition_message_visible,
 		"nutrition_messages" = host.nutrition_messages,
@@ -816,9 +825,9 @@ var/global/list/rsui_healthbar_preview_cache = list()
 				if(choice != "Yes, save.")
 					return TRUE
 			if(!host.save_vore_prefs())
-				tgui_alert_async(usr, "ERROR: Virgo-specific preferences failed to save!","Error")
+				tgui_alert_async(usr, "ERROR: Rogue Star-specific preferences failed to save!","Error") // RS Edit: Change server name reference (Lira, March 2026)
 			else
-				to_chat(usr, "<span class='notice'>Virgo-specific preferences saved!</span>")
+				to_chat(usr, "<span class='notice'>Rogue Star-specific preferences saved!</span>") // RS Edit: Change server name reference (Lira, March 2026)
 				unsaved_changes = FALSE
 			return TRUE
 		if("reloadprefs")
@@ -826,9 +835,9 @@ var/global/list/rsui_healthbar_preview_cache = list()
 			if(alert != "Reload")
 				return FALSE
 			if(!host.apply_vore_prefs())
-				tgui_alert_async(usr, "ERROR: Virgo-specific preferences failed to apply!","Error")
+				tgui_alert_async(usr, "ERROR: Rogue Star-specific preferences failed to apply!","Error") // RS Edit: Change server name reference (Lira, March 2026)
 			else
-				to_chat(usr,"<span class='notice'>Virgo-specific preferences applied from active slot!</span>")
+				to_chat(usr,"<span class='notice'>Rogue Star-specific preferences applied from active slot!</span>") // RS Edit: Change server name reference (Lira, March 2026)
 				unsaved_changes = FALSE
 			return TRUE
 		if("exportpanel")
@@ -995,6 +1004,10 @@ var/global/list/rsui_healthbar_preview_cache = list()
 			return TRUE
 		if("toggle_food_vore")
 			set_trustlist_preference_state("food_vore") // RS Add: Trustlist integration (Lira, September 2025)
+			return TRUE
+		// RS Add: New emote spont vore (Lira, February 2026)
+		if("toggle_emote_vore")
+			set_trustlist_preference_state("emote_vore")
 			return TRUE
 		// RS Add: Spont vore prefs (Lira, January 2026)
 		if("set_spont_belly_pref")
@@ -1963,6 +1976,10 @@ var/global/list/rsui_healthbar_preview_cache = list()
 			. = TRUE
 		if("b_save_digest_mode")
 			host.vore_selected.save_digest_mode = !host.vore_selected.save_digest_mode
+			. = TRUE
+		// RS Add: Allow external feeding option (Lira, January 2026)
+		if("b_allow_external_feeding")
+			host.vore_selected.allow_external_feeding = !host.vore_selected.allow_external_feeding
 			. = TRUE
 		if("b_del")
 			var/alert = tgui_alert(usr, "Are you sure you want to delete your [lowertext(host.vore_selected.name)]?","Confirmation",list("Cancel","Delete"))
