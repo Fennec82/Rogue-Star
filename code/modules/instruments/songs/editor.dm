@@ -6,6 +6,30 @@
 //Updated by Lira for Rogue Star August 2025 to support forming synchronized bands//
 ////////////////////////////////////////////////////////////////////////////////////
 
+// RS Edit: Advanced synth (Lira, March 2026)
+/datum/song/proc/get_current_instrument_label()
+	return using_instrument?.name || "unconfigured"
+
+// RS Edit: Advanced synth (Lira, March 2026)
+/datum/song/proc/prompt_allowed_instrument_choice(mob/user, category_title = "Instrument Category", instrument_title = "Instrument Selection")
+	if(!length(allowed_instrument_ids))
+		return null
+	if(length(allowed_instrument_ids) == 1)
+		return allowed_instrument_ids[1]
+	var/list/categories = list()
+	for(var/i in allowed_instrument_ids)
+		var/datum/instrument/I = SSinstruments.get_instrument(i)
+		if(I)
+			LAZYSET(categories[I.category || "ERROR CATEGORY"], I.name, I.id)
+	var/cat = tgui_input_list(user, "Select Category", category_title, categories)
+	if(!cat)
+		return null
+	var/list/instruments = categories[cat]
+	var/choice = tgui_input_list(user, "Select Instrument", instrument_title, instruments)
+	if(!choice)
+		return null
+	return instruments[choice]
+
 /datum/song/proc/instrument_status_ui()
 	. = list()
 	. += "<div class='statusDisplay'>"
@@ -13,7 +37,7 @@
 	if(!using_instrument)
 		. += "<span class='danger'>No instrument loaded!</span><br>"
 	else
-		. += "[using_instrument.name]<br>"
+		. += "[get_current_instrument_label()]<br>" // RS Edit: Advanced synth (Lira, March 2026)
 	. += "Playback Settings:<br>"
 	if(can_noteshift)
 		. += "<a href='?src=[REF(src)];setnoteshift=1'>Note Shift/Note Transpose</a>: [note_shift] keys / [round(note_shift / 12, 0.01)] octaves<br>"
@@ -47,7 +71,7 @@
 			var/turf/lt = get_turf(parent)
 			for(var/datum/song/S as anything in band_followers)
 				var/member_name = (S.parent && S.parent.name) ? S.parent.name : "instrument"
-				var/configured_name = (S.using_instrument && S.using_instrument.name) ? S.using_instrument.name : "unconfigured"
+				var/configured_name = S.get_current_instrument_label()
 				var/status
 				var/mob/holder = S.get_holder()
 				if(!holder)
@@ -63,7 +87,7 @@
 			. += "No members yet.<br>"
 	else if(band_leader)
 		var/leader_name = (band_leader.parent && band_leader.parent.name) ? band_leader.parent.name : "instrument"
-		var/leader_configured = (band_leader.using_instrument && band_leader.using_instrument.name) ? band_leader.using_instrument.name : "unconfigured"
+		var/leader_configured = band_leader.get_current_instrument_label()
 		. += "<br><b>Band (Member)</b>: Leader is [band_leader.get_holder_name()] ([leader_name]: [leader_configured]) | <a href='?src=[REF(src)];leaveband=1'>Leave</a><br>"
 	else
 		. += "<br><b>Band</b>: <a href='?src=[REF(src)];createband=1'>Create Sync</a><br>"
@@ -86,7 +110,7 @@
 			dat += "<BR>"
 		else
 			dat += "<SPAN CLASS='linkOn'>Play</SPAN> <A href='?src=[REF(src)];stop=1'>Stop</A><BR>"
-			dat += "Repeats left: <B>[repeat]</B><BR>"
+			dat += "Repeats left: <B>[get_repeats_left()]</B><BR>" // RS Edit: Browser-based instrument audio (Lira, March 2026)
 	if(!editing)
 		dat += "<BR><B><A href='?src=[REF(src)];edit=2'>Show Editor</A></B><BR>"
 	else
@@ -135,6 +159,7 @@
  */
 /datum/song/proc/ParseSong(text)
 	set waitfor = FALSE
+	var/was_playing = playing // RS Add: Browser-based instrument audio (Lira, March 2026)
 	//split into lines
 	lines = splittext(text, "\n")
 	if(lines.len)
@@ -155,6 +180,8 @@
 				lines.Remove(l)
 			else
 				linenum++
+		compile_chords() // RS Add: Browser-based instrument audio (Lira, March 2026)
+		refresh_browser_playback(TRUE, was_playing) // RS Add: Browser-based instrument audio (Lira, March 2026)
 		updateDialog(usr) // make sure updates when complete
 
 /datum/song/Topic(href, href_list)
@@ -169,6 +196,7 @@
 		lines = new()
 		tempo = sanitize_tempo(5) // default 120 BPM
 		name = ""
+		refresh_browser_playback(TRUE) // RS Add: Browser-based instrument audio (Lira, March 2026)
 
 	else if(href_list["import"])
 		var/t = ""
@@ -201,6 +229,7 @@
 
 	else if(href_list["tempo"])
 		tempo = sanitize_tempo(tempo + text2num(href_list["tempo"]))
+		refresh_browser_playback(TRUE) // RS Add: Browser-based instrument audio (Lira, March 2026)
 
 	else if(href_list["play"])
 		band_paused_manually = FALSE //RS Add: Clear manual pause when the user explicitly plays again (Lira, August 2025)
@@ -256,24 +285,7 @@
 			set_dropoff_volume(round(amount, 0.01))
 
 	else if(href_list["switchinstrument"])
-		if(!length(allowed_instrument_ids))
-			return
-		else if(length(allowed_instrument_ids) == 1)
-			set_instrument(allowed_instrument_ids[1])
-			return
-		var/list/categories = list()
-		for(var/i in allowed_instrument_ids)
-			var/datum/instrument/I = SSinstruments.get_instrument(i)
-			if(I)
-				LAZYSET(categories[I.category || "ERROR CATEGORY"], I.name, I.id)
-		var/cat = tgui_input_list(usr, "Select Category", "Instrument Category", categories)
-		if(!cat)
-			return
-		var/list/instruments = categories[cat]
-		var/choice = tgui_input_list(usr, "Select Instrument", "Instrument Selection", instruments)
-		if(!choice)
-			return
-		choice = instruments[choice] //get id
+		var/choice = prompt_allowed_instrument_choice(usr) // RS Edit: Advanced synth (Lira, March 2026)
 		if(choice)
 			set_instrument(choice)
 
@@ -281,6 +293,7 @@
 		var/amount = tgui_input_number(usr, "Set note shift", "Note Shift")
 		if(!isnull(amount))
 			note_shift = clamp(amount, note_shift_min, note_shift_max)
+			refresh_browser_playback(TRUE) // RS Add: Browser-based instrument audio (Lira, March 2026)
 
 	else if(href_list["setsustainmode"])
 		var/choice = tgui_input_list(usr, "Choose a sustain mode", "Sustain Mode", list("Linear", "Exponential"))
@@ -289,9 +302,11 @@
 				sustain_mode = SUSTAIN_LINEAR
 			if("Exponential")
 				sustain_mode = SUSTAIN_EXPONENTIAL
+		refresh_browser_playback(TRUE) // RS Add: Browser-based instrument audio (Lira, March 2026)
 
 	else if(href_list["togglesustainhold"])
 		full_sustain_held_note = !full_sustain_held_note
+		refresh_browser_playback(TRUE) // RS Add: Browser-based instrument audio (Lira, March 2026)
 
 	//RS Add Start: Define band sync hrefs (Lira, August 2025)
 
@@ -299,9 +314,12 @@
 		var/seconds = tgui_input_number(usr, "Set band sync delay (seconds)", "Band Sync Delay", band_delay_ds / 10)
 		if(!isnull(seconds))
 			band_delay_ds = clamp(round(seconds * 10, get_instrument_time_step()), 0, 5 SECONDS) // RS Edit: Remove FPS dependency (Lira, November 2025)
+			refresh_browser_playback(TRUE) // RS Add: Browser-based instrument audio (Lira, March 2026)
 
 	else if(href_list["toggleautoplay"])
 		band_autoplay = !band_autoplay
+		if(band_autoplay)
+			clear_band_autoplay_start_failure()
 
 	else if(href_list["setnotefilter"])
 		var/low = tgui_input_number(usr, "Lowest note key (0-127)", "Note Range Low", note_filter_min)
