@@ -411,6 +411,7 @@
 /client/verb/toggle_tgui_inputlock()
 	set name = "Toggle TGUI Input Lock"
 	set category = "Preferences"
+	set hidden = TRUE // RS Add: Preference settings panel (Lira, July 2026)
 	set desc = "Toggles whether or not pressing the 'Enter' key in TGUI input sends the message or creates a new line."
 
 	prefs.tgui_input_lock = !prefs.tgui_input_lock	//There is no preference datum for tgui input lock, nor for any TGUI prefs.
@@ -573,7 +574,7 @@
 			to_chat(src, "<span class='filter_system'>Examining things will only output the base examine text, and you will not be redirected to the examine panel automatically.</span>")
 
 		if(EXAMINE_MODE_INCLUDE_USAGE)
-			to_chat(src, "<span class='filter_system'>Examining things will also print any extra usage information normally included in the examine panel to the chat.</span>")
+			to_chat(src, "<span class='filter_system'>Examining things will also print extended information normally included in the examine panel to the chat.</span>") // RS Edit: Examine Mode Fix (Lira, July 2026)
 
 		if(EXAMINE_MODE_SWITCH_TO_PANEL)
 			to_chat(src, "<span class='filter_system'>Examining things will direct you to the examine panel, where you can view extended information about the thing.</span>")
