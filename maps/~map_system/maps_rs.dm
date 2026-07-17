@@ -8,7 +8,7 @@ var/global/list/possible_station_maps = list(
 
 /client/proc/map_swap()
 	set name = "Map Swap"
-	set category = "Fun"
+	set category = "Server"
 
 	if(!check_rights(R_FUN)) return
 
