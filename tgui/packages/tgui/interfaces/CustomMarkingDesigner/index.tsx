@@ -765,8 +765,8 @@ const isPayloadStaleForSelection = (
 const resolveEnableCustomDisclaimer = (
   data: CustomMarkingDesignerData
 ): string =>
-  data.custom_marking_enable_disclaimer ||
-  "This is an advanced character editing tool that allows you to edit individual pixels on your character to adjust or create new markings.  Custom markings have the same standards as markings added to the RogueStar codebase.  They should make realistic sense and must be SFW.  If it wouldn't get approved to add to the code, it should not be done here.  If you are uncertain about something, please let us know and we're happy to chatter about it.";
+  data.custom_marking_enable_disclaimer ||This is an advanced character editing tool that allows you to edit individual pixels on your character to adjust or create new markings.  Custom markings have the same standards as markings added to the RogueStar codebase.
+  "  Unlike the offical Rouge Star server, NSFW markings are allowed here. This is a pixel art tool provided by our upstream with no restrictions, please use it responsibly.";
 
 const resolveCanvasBackgroundDefaults = (
   data: CustomMarkingDesignerData
