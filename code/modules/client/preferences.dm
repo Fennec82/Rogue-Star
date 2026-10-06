@@ -253,7 +253,7 @@ var/list/preferences_datums = list()
 
 // Disclaimer text for enabling custom markings (Lira, December 2025) //Chaosstation edit - We are a downstream that allows nsfw so changing
 /datum/preferences/proc/get_custom_markings_enable_disclaimer()
-	return "This is an advanced character editing tool that allows you to edit individual pixels on your character to adjust or create new markings.  Custom markings have the same standards as markings added to the RogueStar codebase. Unlike the offical Rouge Star server, NSFW markings are allowed here. This is a pixel art tool provided by our upstream with no restrictions, please use it responsibly."
+	return "This is an advanced character editing tool that allows you to edit individual pixels on your character to adjust or create new markings.  Custom markings have the same standards as markings added to the Rogue Star codebase. Unlike the offical Rogue Star server, NSFW markings are allowed here. This is a pixel art tool provided by our upstream with no restrictions, please use it responsibly."
 
 // Return custom marking
 /datum/preferences/proc/get_primary_custom_marking()
